@@ -11,8 +11,7 @@
         <header>
             <div class="header-content">
                 <div>
-                    <h1>🤖 AI 專案管理系統</h1>
-                    <p>Billion Studio - 管理你的 AI 專案和檔案</p>
+                    <h1>AI 專案管理系統</h1>
                 </div>
                 <div class="user-menu">
                     <span id="userName" class="user-name"></span>
@@ -38,29 +37,8 @@
 
                 <div class="category-filter">
                     <h3>📁 專案分類</h3>
-                    <div class="category-item active" data-category="all" onclick="filterByCategory('all')">
-                        <span>全部專案</span>
-                        <span class="category-count" id="count-all">0</span>
-                    </div>
-                    <div class="category-item" data-category="網頁開發" onclick="filterByCategory('網頁開發')">
-                        <span>網頁開發</span>
-                        <span class="category-count" id="count-網頁開發">0</span>
-                    </div>
-                    <div class="category-item" data-category="內容創作" onclick="filterByCategory('內容創作')">
-                        <span>內容創作</span>
-                        <span class="category-count" id="count-內容創作">0</span>
-                    </div>
-                    <div class="category-item" data-category="數據分析" onclick="filterByCategory('數據分析')">
-                        <span>數據分析</span>
-                        <span class="category-count" id="count-數據分析">0</span>
-                    </div>
-                    <div class="category-item" data-category="自動化工具" onclick="filterByCategory('自動化工具')">
-                        <span>自動化工具</span>
-                        <span class="category-count" id="count-自動化工具">0</span>
-                    </div>
-                    <div class="category-item" data-category="其他" onclick="filterByCategory('其他')">
-                        <span>其他</span>
-                        <span class="category-count" id="count-其他">0</span>
+                    <div id="categoryList">
+                        <!-- 動態生成分類 -->
                     </div>
                 </div>
             </aside>
@@ -89,11 +67,6 @@
                     <label for="projectCategory">專案分類 *</label>
                     <select id="projectCategory" required>
                         <option value="">請選擇分類</option>
-                        <option value="網頁開發">網頁開發</option>
-                        <option value="內容創作">內容創作</option>
-                        <option value="數據分析">數據分析</option>
-                        <option value="自動化工具">自動化工具</option>
-                        <option value="其他">其他</option>
                     </select>
                 </div>
 

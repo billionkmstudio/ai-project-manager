@@ -33,7 +33,7 @@ async function emailLogin() {
     try {
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         console.log('登入成功:', userCredential.user);
-        window.location.href = 'index.html';
+        window.location.href = './index.html';
     } catch (error) {
         console.error('登入錯誤:', error);
         let errorMessage = '登入失敗';
@@ -91,7 +91,7 @@ async function emailRegister() {
         });
 
         console.log('註冊成功:', userCredential.user);
-        window.location.href = 'index.html';
+        window.location.href = './index.html';
     } catch (error) {
         console.error('註冊錯誤:', error);
         let errorMessage = '註冊失敗';
@@ -134,17 +134,24 @@ async function googleLogin() {
         }
 
         console.log('Google 登入成功:', user);
-        window.location.href = 'index.html';
+        // 使用絕對路徑或根路徑
+        window.location.href = './index.html';
     } catch (error) {
         console.error('Google 登入錯誤:', error);
+        
+        // 如果是取消登入，不顯示錯誤
+        if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+            return;
+        }
+        
         let errorMessage = 'Google 登入失敗';
         
         switch (error.code) {
-            case 'auth/popup-closed-by-user':
-                errorMessage = '登入視窗已關閉';
-                break;
             case 'auth/popup-blocked':
-                errorMessage = '彈出視窗被封鎖';
+                errorMessage = '彈出視窗被封鎖，請允許彈出視窗';
+                break;
+            case 'auth/unauthorized-domain':
+                errorMessage = '此網域未經授權，請到 Firebase Console 新增授權網域';
                 break;
             default:
                 errorMessage = error.message;

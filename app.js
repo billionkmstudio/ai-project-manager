@@ -4,12 +4,33 @@ let currentProjectId = null;
 let uploadedFiles = [];
 let currentFilter = 'all';
 let searchQuery = '';
+let categories = ['AI 工具', '網頁專案', '其他']; // 預設分類（可修改）
 
 // 檢查用戶認證狀態
 auth.onAuthStateChanged(async (user) => {
     if (user) {
         currentUser = user;
-        document.getElementById('userName').textContent = user.displayName || user.email;
+        
+        // 優先顯示 displayName，如果沒有則從 Firestore 取得，最後才顯示 email
+        let displayName = user.displayName;
+        
+        if (!displayName) {
+            // 嘗試從 Firestore 取得用戶名稱
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists && userDoc.data().name) {
+                    displayName = userDoc.data().name;
+                } else {
+                    // 如果都沒有，使用 email 的第一部分
+                    displayName = user.email.split('@')[0];
+                }
+            } catch (error) {
+                console.error('取得用戶資料錯誤:', error);
+                displayName = user.email.split('@')[0];
+            }
+        }
+        
+        document.getElementById('userName').textContent = displayName;
         await loadProjects();
     } else {
         // 未登入，重定向到登入頁
@@ -82,6 +103,9 @@ async function loadProjects() {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    renderCategories();
+    populateCategorySelect();
+    
     // 設置檔案上傳區域
     const uploadArea = document.getElementById('fileUploadArea');
     if (uploadArea) {
@@ -104,6 +128,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// 渲染分類列表
+function renderCategories() {
+    const categoryList = document.getElementById('categoryList');
+    if (!categoryList) return;
+    
+    let html = `
+        <div class="category-item active" data-category="all" onclick="filterByCategory('all')">
+            <span>全部專案</span>
+            <span class="category-count" id="count-all">0</span>
+        </div>
+    `;
+    
+    categories.forEach(category => {
+        const safeId = category.replace(/\s/g, '-');
+        html += `
+            <div class="category-item" data-category="${category}" onclick="filterByCategory('${category}')">
+                <span>${category}</span>
+                <span class="category-count" id="count-${safeId}">0</span>
+            </div>
+        `;
+    });
+    
+    categoryList.innerHTML = html;
+}
+
+// 填充分類下拉選單
+function populateCategorySelect() {
+    const select = document.getElementById('projectCategory');
+    if (!select) return;
+    
+    // 保留第一個選項
+    select.innerHTML = '<option value="">請選擇分類</option>';
+    
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+    });
+}
 
 function openNewProjectModal() {
     currentProjectId = null;
@@ -358,13 +423,17 @@ function updateStats() {
     // 更新總專案數
     document.getElementById('totalProjects').textContent = projects.length;
     
-    // 更新各分類數量
-    document.getElementById('count-all').textContent = projects.length;
+    // 更新全部專案數量
+    const countAll = document.getElementById('count-all');
+    if (countAll) {
+        countAll.textContent = projects.length;
+    }
     
-    const categories = ['網頁開發', '內容創作', '數據分析', '自動化工具', '其他'];
+    // 更新各分類數量
     categories.forEach(category => {
         const count = projects.filter(p => p.category === category).length;
-        const element = document.getElementById(`count-${category}`);
+        const safeId = category.replace(/\s/g, '-');
+        const element = document.getElementById(`count-${safeId}`);
         if (element) {
             element.textContent = count;
         }
