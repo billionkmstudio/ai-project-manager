@@ -10,7 +10,8 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <div>
+                <div class="header-title-group">
+                    <img src="logo.jpg" alt="Logo" class="header-logo">
                     <h1>AI 專案管理系統</h1>
                 </div>
                 <div class="user-menu">
@@ -37,6 +38,7 @@
 
                 <div class="category-filter">
                     <h3>📁 專案分類</h3>
+                    <button class="btn-add-category" onclick="openAddCategoryModal()">➕ 新增分類</button>
                     <div id="categoryList">
                         <!-- 動態生成分類 -->
                     </div>
@@ -100,6 +102,22 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeViewModal()">&times;</button>
             <div id="viewContent"></div>
+        </div>
+    </div>
+
+    <!-- 新增分類 Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+            <h2>新增專案分類</h2>
+            
+            <form id="categoryForm" onsubmit="addCategory(event)">
+                <div class="form-group">
+                    <label for="newCategoryName">分類名稱 *</label>
+                    <input type="text" id="newCategoryName" required placeholder="例如：客戶專案" maxlength="20">
+                </div>
+                <button type="submit" class="btn btn-submit">新增分類</button>
+            </form>
         </div>
     </div>
 

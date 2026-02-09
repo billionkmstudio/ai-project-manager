@@ -32,9 +32,22 @@ header {
     align-items: center;
 }
 
+.header-title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
 header h1 {
     font-size: 2.5em;
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 header p {
@@ -129,6 +142,25 @@ header p {
     margin-bottom: 15px;
     color: #333;
     font-size: 1.1em;
+}
+
+.btn-add-category {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    color: #667eea;
+    border: 2px dashed #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-add-category:hover {
+    background: #667eea;
+    color: white;
 }
 
 .category-item {
@@ -427,8 +459,8 @@ header p {
 }
 
 .btn-small {
-    padding: 8px 16px;
-    font-size: 0.9em;
+    padding: 6px 12px;
+    font-size: 0.85em;
     flex: 1;
 }
 

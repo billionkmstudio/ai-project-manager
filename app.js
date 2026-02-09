@@ -4,7 +4,8 @@ let currentProjectId = null;
 let uploadedFiles = [];
 let currentFilter = 'all';
 let searchQuery = '';
-let categories = ['AI 工具', '網頁專案', '其他']; // 預設分類（可修改）
+// 從 localStorage 讀取自訂分類，如果沒有則使用預設
+let categories = JSON.parse(localStorage.getItem('customCategories')) || ['AI 工具', '網頁專案', '其他'];
 
 // 檢查用戶認證狀態
 auth.onAuthStateChanged(async (user) => {
@@ -376,7 +377,10 @@ function editProject(projectId) {
 }
 
 async function deleteProject(projectId) {
-    if (!confirm('確定要刪除這個專案嗎？此操作無法復原。')) return;
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+    
+    if (!confirm(`確定要刪除「${project.name}」這個專案嗎？此操作無法復原。`)) return;
     
     try {
         await db.collection('projects').doc(projectId).delete();
@@ -454,4 +458,49 @@ document.getElementById('projectModal').addEventListener('click', function(e) {
 
 document.getElementById('viewModal').addEventListener('click', function(e) {
     if (e.target === this) closeViewModal();
+});
+
+// 新增分類相關函數
+function openAddCategoryModal() {
+    document.getElementById('newCategoryName').value = '';
+    document.getElementById('categoryModal').classList.add('active');
+}
+
+function closeCategoryModal() {
+    document.getElementById('categoryModal').classList.remove('active');
+}
+
+function addCategory(event) {
+    event.preventDefault();
+    
+    const newCategoryName = document.getElementById('newCategoryName').value.trim();
+    
+    // 檢查是否已存在
+    if (categories.includes(newCategoryName)) {
+        alert('此分類已存在！');
+        return;
+    }
+    
+    // 新增分類
+    categories.push(newCategoryName);
+    
+    // 儲存到 localStorage
+    localStorage.setItem('customCategories', JSON.stringify(categories));
+    
+    // 重新渲染
+    renderCategories();
+    populateCategorySelect();
+    
+    closeCategoryModal();
+    alert(`已新增分類「${newCategoryName}」`);
+}
+
+// 在 categoryModal 點擊背景關閉
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryModal = document.getElementById('categoryModal');
+    if (categoryModal) {
+        categoryModal.addEventListener('click', function(e) {
+            if (e.target === this) closeCategoryModal();
+        });
+    }
 });
